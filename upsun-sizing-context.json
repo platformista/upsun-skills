@@ -1,0 +1,44 @@
+{
+  "upsun_sizing_context": {
+    "concepts": {
+      "vertical_scaling": "Adjusting CPU and RAM for a single container. RAM is tied to CPU selection via profiles.",
+      "horizontal_scaling": "Adding more instances (replicas). Resources are allocated per instance, not split.",
+      "container_profiles": {
+        "description": "Determines the RAM-to-CPU ratio.",
+        "options": [
+          { "id": "HIGH_CPU", "ratio": "Low RAM", "best_for": ["Node.js", "PHP", "Python", "Go", "Rust", ".NET", "Stateless Apps"] },
+          { "id": "BALANCED", "ratio": "Medium RAM", "best_for": ["Redis", "Memcached", "General Purpose"] },
+          { "id": "HIGH_MEMORY", "ratio": "High RAM", "best_for": ["MySQL", "MariaDB", "PostgreSQL", "MongoDB", "Java", "Elasticsearch"] },
+          { "id": "HIGHER_MEMORY", "ratio": "Very High RAM", "best_for": ["Heavy Data Processing", "Large Caches"] }
+        ]
+      }
+    },
+    "resource_matrix_shared": {
+      "type": "Shared CPU (Standard)",
+      "units": { "cpu": "vCPU", "ram": "MB" },
+      "allocations": [
+        { "cpu": 0.1,  "ram": { "HIGH_CPU": 64,   "BALANCED": 352,  "HIGH_MEMORY": 448,   "HIGHER_MEMORY": 864 } },
+        { "cpu": 0.25, "ram": { "HIGH_CPU": 128,  "BALANCED": 640,  "HIGH_MEMORY": 832,   "HIGHER_MEMORY": 1472 } },
+        { "cpu": 0.5,  "ram": { "HIGH_CPU": 224,  "BALANCED": 1088, "HIGH_MEMORY": 1408,  "HIGHER_MEMORY": 2368 } },
+        { "cpu": 1.0,  "ram": { "HIGH_CPU": 384,  "BALANCED": 1920, "HIGH_MEMORY": 2432,  "HIGHER_MEMORY": 3840 } },
+        { "cpu": 2.0,  "ram": { "HIGH_CPU": 704,  "BALANCED": 2800, "HIGH_MEMORY": 4032,  "HIGHER_MEMORY": 6336 } },
+        { "cpu": 4.0,  "ram": { "HIGH_CPU": 1216, "BALANCED": 4800, "HIGH_MEMORY": 6720,  "HIGHER_MEMORY": 10496 } },
+        { "cpu": 6.0,  "ram": { "HIGH_CPU": 1728, "BALANCED": 6080, "HIGH_MEMORY": 9024,  "HIGHER_MEMORY": 14080 } },
+        { "cpu": 8.0,  "ram": { "HIGH_CPU": 2240, "BALANCED": 7296, "HIGH_MEMORY": 11200, "HIGHER_MEMORY": 17408 } }
+      ]
+    },
+    "resource_matrix_guaranteed": {
+      "type": "Guaranteed CPU (Dedicated/Production)",
+      "note": "HIGHER_MEMORY profile not supported in this tier.",
+      "units": { "cpu": "vCPU", "ram": "MB" },
+      "allocations": [
+        { "cpu": 4,  "ram": { "HIGH_CPU": 8192,   "BALANCED": 16384,  "HIGH_MEMORY": 32768,  "HIGHER_MEMORY": null } },
+        { "cpu": 8,  "ram": { "HIGH_CPU": 16384,  "BALANCED": 32768,  "HIGH_MEMORY": 65536,  "HIGHER_MEMORY": null } },
+        { "cpu": 16, "ram": { "HIGH_CPU": 32768,  "BALANCED": 65536,  "HIGH_MEMORY": 131072, "HIGHER_MEMORY": null } },
+        { "cpu": 32, "ram": { "HIGH_CPU": 65536,  "BALANCED": 131072, "HIGH_MEMORY": 262144, "HIGHER_MEMORY": null } },
+        { "cpu": 48, "ram": { "HIGH_CPU": 98304,  "BALANCED": 196608, "HIGH_MEMORY": 393216, "HIGHER_MEMORY": null } },
+        { "cpu": 64, "ram": { "HIGH_CPU": 131072, "BALANCED": 262144, "HIGH_MEMORY": 524288, "HIGHER_MEMORY": null } }
+      ]
+    }
+  }
+}
