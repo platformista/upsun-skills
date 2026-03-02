@@ -5,20 +5,104 @@
       "default_strategy": "Minimize latency to end-users."
     },
     "regions": [
-      { "id": "au.platform.sh", "code": "au", "location": "Sydney, Australia", "provider": "AWS", "green": false, "timezone": "Australia/Sydney" },
-      { "id": "au-2.platform.sh", "code": "au-2", "location": "Sydney, Australia", "provider": "Azure", "green": false, "timezone": "Australia/Sydney" },
-      { "id": "ca-1.platform.sh", "code": "ca-1", "location": "Montreal, Canada", "provider": "AWS", "green": true, "timezone": "America/Toronto" },
-      { "id": "ch-1.platform.sh", "code": "ch-1", "location": "Zurich, Switzerland", "provider": "Google", "green": true, "timezone": "Europe/Zurich" },
-      { "id": "de-2.platform.sh", "code": "de-2", "location": "Berlin, Germany", "provider": "Google", "green": false, "timezone": "Europe/Berlin" },
-      { "id": "eu.platform.sh", "code": "eu", "location": "Dublin, Ireland", "provider": "AWS", "green": false, "timezone": "Europe/Dublin" },
-      { "id": "eu-5.platform.sh", "code": "eu-5", "location": "Stockholm, Sweden", "provider": "AWS", "green": true, "timezone": "Europe/Stockholm" },
-      { "id": "fr-3.platform.sh", "code": "fr-3", "location": "Paris, France", "provider": "OVH", "green": true, "timezone": "Europe/Paris" },
-      { "id": "fr-4.platform.sh", "code": "fr-4", "location": "Paris, France", "provider": "Azure", "green": true, "timezone": "Europe/Paris" },
-      { "id": "uk-1.platform.sh", "code": "uk-1", "location": "London, UK", "provider": "Google", "green": false, "timezone": "Europe/London" },
-      { "id": "us.platform.sh", "code": "us", "location": "Eastern US (N. Virginia)", "provider": "AWS", "green": false, "timezone": "America/New_York" },
-      { "id": "us-2.platform.sh", "code": "us-2", "location": "Eastern US (N. Virginia)", "provider": "AWS", "green": false, "timezone": "America/New_York" },
-      { "id": "us-3.platform.sh", "code": "us-3", "location": "Western US (Washington)", "provider": "Azure", "green": true, "timezone": "America/Los_Angeles" },
-      { "id": "us-4.platform.sh", "code": "us-4", "location": "Eastern US (N. Virginia)", "provider": "Google", "green": false, "timezone": "America/New_York" }
+      {
+        "code": "au",
+        "location": "Sydney, Australia",
+        "provider": "AWS",
+        "green": false,
+        "timezone": "Australia/Sydney"
+      },
+      {
+        "code": "au-2",
+        "location": "Sydney, Australia",
+        "provider": "Azure",
+        "green": false,
+        "timezone": "Australia/Sydney"
+      },
+      {
+        "code": "ca-1",
+        "location": "Montreal, Canada",
+        "provider": "AWS",
+        "green": true,
+        "timezone": "America/Toronto"
+      },
+      {
+        "code": "ch-1",
+        "location": "Zurich, Switzerland",
+        "provider": "Google",
+        "green": true,
+        "timezone": "Europe/Zurich"
+      },
+      {
+        "code": "de-2",
+        "location": "Berlin, Germany",
+        "provider": "Google",
+        "green": false,
+        "timezone": "Europe/Berlin"
+      },
+      {
+        "code": "eu",
+        "location": "Dublin, Ireland",
+        "provider": "AWS",
+        "green": false,
+        "timezone": "Europe/Dublin"
+      },
+      {
+        "code": "eu-5",
+        "location": "Stockholm, Sweden",
+        "provider": "AWS",
+        "green": true,
+        "timezone": "Europe/Stockholm"
+      },
+      {
+        "code": "fr-3",
+        "location": "Paris, France",
+        "provider": "OVH",
+        "green": true,
+        "timezone": "Europe/Paris"
+      },
+      {
+        "code": "fr-4",
+        "location": "Paris, France",
+        "provider": "Azure",
+        "green": true,
+        "timezone": "Europe/Paris"
+      },
+      {
+        "code": "uk-1",
+        "location": "London, UK",
+        "provider": "Google",
+        "green": false,
+        "timezone": "Europe/London"
+      },
+      {
+        "code": "us",
+        "location": "Eastern US (N. Virginia)",
+        "provider": "AWS",
+        "green": false,
+        "timezone": "America/New_York"
+      },
+      {
+        "code": "us-2",
+        "location": "Eastern US (N. Virginia)",
+        "provider": "AWS",
+        "green": false,
+        "timezone": "America/New_York"
+      },
+      {
+        "code": "us-3",
+        "location": "Western US (Washington)",
+        "provider": "Azure",
+        "green": true,
+        "timezone": "America/Los_Angeles"
+      },
+      {
+        "code": "us-4",
+        "location": "Eastern US (N. Virginia)",
+        "provider": "Google",
+        "green": false,
+        "timezone": "America/New_York"
+      }
     ]
   }
 }
