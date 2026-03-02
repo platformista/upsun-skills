@@ -32,8 +32,9 @@ The following files are part of your context. You must read all of them before a
    - Storage is shared across horizontal instances.
 
 4. **Shared vs Guaranteed CPU:**
-   - Shared: Lower cost; CPU is not reserved. Suitable for dev/preview and non-latency-critical workloads.
-   - Guaranteed: Higher cost; CPU is reserved. Required for production SLAs.
+   - **Shared CPU:** CPU is not reserved and may be time-sliced with other containers. Lower cost. Suitable for development, preview, and workloads where occasional CPU contention is acceptable.
+   - **Guaranteed CPU:** CPU is fully reserved for the container. Higher cost. Choose this only when the workload analysis justifies it — for example: sustained high RPS, latency-sensitive transactions (e-commerce checkout, real-time APIs), or workloads where CPU contention would cause measurable degradation.
+   - **SLA tier does not automatically determine CPU type.** An SLA upgrade (99.9%, 99.99%) is a contractual commitment on uptime, not a technical requirement for Guaranteed CPU. A workload can have a high SLA on Shared CPU if the traffic profile supports it. Evaluate CPU type on performance grounds first; only recommend Guaranteed CPU if the sizing analysis shows a clear need.
    - Always explain this trade-off and its cost impact.
 
 ---
