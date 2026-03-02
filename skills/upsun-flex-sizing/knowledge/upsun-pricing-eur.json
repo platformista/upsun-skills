@@ -1,0 +1,188 @@
+{
+    "upsun_pricing_context": {
+        "currency": "EUR",
+        "base_fees": {
+            "project_fee": {
+                "cost": 9.00,
+                "unit": "month",
+                "description": "Mandatory fee per project."
+            },
+            "user_license": {
+                "cost": 10.00,
+                "unit": "month",
+                "description": "Per user account. Includes all standard features."
+            },
+            "advanced_user_management": {
+                "cost": 9.00,
+                "unit": "user/month",
+                "description": "Adds SSO, MFA enforcement, Teams. Requires Standard User License."
+            }
+        },
+        "compute_rates_hourly": {
+            "application": {
+                "shared_cpu": 0.033,
+                "guaranteed_cpu": 0.100,
+                "ram_gb": 0.013
+            },
+            "services": {
+                "shared_cpu": 0.049,
+                "guaranteed_cpu": 0.120,
+                "ram_gb": 0.020
+            }
+        },
+        "managed_services_monthly": {
+            "mongodb_per_gb_ram": {
+                "cost": 0.05,
+                "unit": "hourly per GB RAM",
+                "description": "Premium managed MongoDB."
+            },
+            "elasticsearch_per_gb_ram": {
+                "cost": 0.19,
+                "unit": "hourly per GB RAM",
+                "description": "Premium managed Elasticsearch."
+            }
+        },
+        "storage_rates_monthly": {
+            "disk_storage": {
+                "cost": 0.49,
+                "unit": "GB"
+            },
+            "backup_storage": {
+                "cost": 0.10,
+                "unit": "GB"
+            }
+        },
+        "network_edge_rates": {
+            "egress_bandwidth": {
+                "included": 10,
+                "unit": "GB",
+                "overage_cost": 0.03
+            },
+            "ingress_requests": {
+                "included": 500000,
+                "unit": "requests",
+                "overage_cost": 1.00,
+                "overage_unit": "per 100k"
+            },
+            "fastly_cdn": {
+                "transfer": {
+                    "cost": 0.094,
+                    "unit": "GB"
+                },
+                "requests": {
+                    "cost": 0.188,
+                    "unit": "per 100k"
+                }
+            },
+            "fastly_waf_basic": {
+                "0_1m_requests": {
+                    "cost": 85.00,
+                    "type": "flat fee"
+                },
+                "1_2m_requests": {
+                    "cost": 42.00,
+                    "unit": "per million"
+                },
+                "2_3m_requests": {
+                    "cost": 33.00,
+                    "unit": "per million"
+                },
+                "3m_plus_requests": {
+                    "cost": 24.00,
+                    "unit": "per million"
+                }
+            },
+            "fastly_waf_configurable": {
+                "0_2m_requests": {
+                    "cost": 445.00,
+                    "type": "flat fee"
+                },
+                "2_3m_requests": {
+                    "cost": 33.00,
+                    "unit": "per million"
+                },
+                "3m_plus_requests": {
+                    "cost": 24.00,
+                    "unit": "per million"
+                }
+            },
+            "fastly_rate_limiting": {
+                "cost": 52.00,
+                "description": "Without WAF."
+            },
+            "fastly_image_optimization": {
+                "0_50m_images": {
+                    "cost": 56.00,
+                    "unit": "per 10 million"
+                },
+                "50m_plus_images": {
+                    "cost": 28.00,
+                    "unit": "per 10 million"
+                }
+            }
+        },
+        "build_resources": {
+            "included": {
+                "cpu_hours": 2.5,
+                "memory_gb_hours": 5
+            },
+            "additional": {
+                "cpu_hour": 0.033,
+                "memory_gb_hour": 0.013
+            }
+        },
+        "platform_services": {
+            "infrastructure_metrics": {
+                "included": "30 days",
+                "additional_cost": null
+            },
+            "continuous_profiling": {
+                "included": "Past 15 minutes",
+                "extended_30_days": 4.89,
+                "unit": "month"
+            },
+            "logs_forwarding": {
+                "included": "Real-time forwarding",
+                "cost": 0.10,
+                "unit": "GB"
+            },
+            "ddos_protection": {
+                "included": true,
+                "enhanced_custom": 169.00
+            },
+            "tls_certificates": {
+                "included": "100 Let's Encrypt certs",
+                "standard_tls": 8.50,
+                "standard_tls_description": "Flat fee, 1-5 certs"
+            },
+            "hipaa_compliance": {
+                "cost_factor": 0.45,
+                "description": "+45% of project value"
+            }
+        },
+        "support_tiers": {
+            "standard": {
+                "cost_factor": 0.10,
+                "description": "+10% of global spend. 4-hour best-effort urgent response."
+            },
+            "advanced": {
+                "cost_factor": 0.15,
+                "description": "+15% of global spend. 1-hour guaranteed urgent response."
+            },
+            "premium": {
+                "cost_factor": 0.19,
+                "description": "+19% of global spend. 30-minute guaranteed urgent response."
+            }
+        },
+        "sla_upgrades": {
+            "uptime_99_9": {
+                "cost_factor": 0.20,
+                "description": "+20% of project value. Requires Advanced support."
+            },
+            "uptime_99_99": {
+                "cost_factor": 0.45,
+                "description": "+45% of project value. Requires Advanced support."
+            }
+        }
+    }
+}
