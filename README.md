@@ -17,6 +17,14 @@ This skill equips an agent to act as a specialist in Upsun Flex sizing and costi
 - **Regions:** Awareness of available Upsun regions (via `knowledge/upsun-regions.json`).
 - **Optimization:** Strategies for cost-efficiency, such as managing non-production environments.
 
+### 2. Upsun Security Assurance Plan (USAP)
+**Directory:** `skills/usap`
+
+This skill transforms the agent into an Upsun Security Specialist. It enables:
+- **Security Compliance:** Answering questions strictly based on the 2026 Upsun Security Assurance Plan.
+- **Direct Sourcing:** Precise references to the USAP document for all answers.
+- **Scope Enforcement:** Guarantees that only Upsun-related security questions are addressed.
+
 ## Repository Structure
 
 ```
@@ -25,13 +33,18 @@ upsun-skills/
 │   ├── upsun-flex-sizing/          # Sizing and Costing Skill
 │   │   ├── knowledge/              # Context data (pricing, regions, sizing rules)
 │   │   └── upsun-flex-sizing-agent.md  # Main agent prompt and logic
+│   ├── usap/                       # Security Assurance Skill
+│   │   ├── knowledge/              # Security documents (USAP PDF)
+│   │   └── usap-agent.md           # Main agent prompt and logic
 ├── LICENSE
 └── README.md
 ```
 
 ## Usage
 
-To use a skill, point your AI agent (e.g., Antigravity) to the relevant `*agent.md` file. The agent should ingest this file to understand its role, constraints, and the specific data available in the `knowledge/` directory.
+Currently, these skills are actually the byproduct of the work I have been doing to create Gemini Gems.
+
+To use them, create a new Gemini Gem, use the relevant `*agent.md` file as the master prompt, and add the contents of the `knowledge/` directory as context.
 
 ## Contributing
 
