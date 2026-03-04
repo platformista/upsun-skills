@@ -4,7 +4,7 @@ The following files are part of your context. You must read all of them before a
 
 | File | Purpose |
 |---|---|
-| `upsun-pricing-eur.json` | All EUR rates: hourly CPU/RAM, storage, network/egress, managed services, build resources, platform services, support tiers, SLA uplifts |
+| `upsun-pricing-eur.json` | All EUR rates: **monthly** CPU/RAM, storage, network/egress, managed services, build resources, platform services, support tiers, SLA uplifts |
 | `upsun-sizing-context.json` | Container profiles (HIGH_CPU, BALANCED, HIGH_MEMORY, HIGHER_MEMORY) and shared/guaranteed resource matrices |
 | `upsun-regions.json` | Available deployment regions, cloud provider, timezone, green discount eligibility |
 
@@ -92,7 +92,7 @@ Before you attempt any sizing or pricing, you must:
 3. Map each service (MariaDB, PostgreSQL, Redis, etc.) to its default container profile.
 4. Look up actual RAM values from `upsun-sizing-context.json` for all subsequent calculations.
 
-> ⚠️ **Unit conversion required:** RAM values in `upsun-sizing-context.json` are in **MB**. Convert to GB (divide by 1024) before applying the hourly GB RAM rate from `upsun-pricing-eur.json`.
+> ⚠️ **Usage Note:** All compute and service rates in `upsun-pricing-eur.json` are now **monthly**. For calculations involving partial months (e.g. ad-hoc preview environments), use `fraction = (uptime_hours / 732)` against the monthly rate.
 
 You are free to override the default profile when the workload justifies it. Always explain the reason.
 
@@ -124,16 +124,16 @@ All rates are in `upsun-pricing-eur.json`. Use 732 hours as the standard monthly
 For each application or service:
 
 ```
-monthly_cost = (cpu_rate × cpu_units × 732) + (ram_rate × ram_gb × 732)
+monthly_cost = (monthly_cpu_rate × cpu_units) + (monthly_ram_rate × ram_gb)
 ```
+
+> **Note:** RAM GB is looked up from `upsun-sizing-context.json` (as MB) and converted to GB (÷ 1024).
 
 For environments running less than 24/7:
 
 ```
-monthly_cost = [(cpu_rate × cpu_units) + (ram_rate × ram_gb)] × uptime_hours
+monthly_cost = [(monthly_cpu_rate × cpu_units) + (monthly_ram_rate × ram_gb)] × (uptime_hours / 732)
 ```
-
-Where `uptime_hours` ≤ 732.
 
 Then, for the environment total:
 

@@ -4,12 +4,12 @@
         "base_fees": {
             "project_fee": {
                 "cost": 9.00,
-                "unit": "month",
+                "unit": "project/month",
                 "description": "Mandatory fee per project."
             },
             "user_license": {
                 "cost": 10.00,
-                "unit": "month",
+                "unit": "user/month",
                 "description": "Per user account. Includes all standard features."
             },
             "advanced_user_management": {
@@ -18,34 +18,34 @@
                 "description": "Adds SSO, MFA enforcement, Teams. Requires Standard User License."
             }
         },
-        "compute_rates_hourly": {
+        "compute_rates_monthly": {
             "application": {
-                "shared_cpu": 0.033,
-                "guaranteed_cpu": 0.100,
-                "ram_gb": 0.013
+                "shared_cpu": 24.50,
+                "guaranteed_cpu": 73.50,
+                "ram_gb": 9.80
             },
             "services": {
-                "shared_cpu": 0.049,
-                "guaranteed_cpu": 0.120,
-                "ram_gb": 0.020
+                "shared_cpu": 36.26,
+                "guaranteed_cpu": 88.20,
+                "ram_gb": 14.70
             }
         },
         "managed_services_monthly": {
             "mongodb_per_gb_ram": {
-                "cost": 0.05,
-                "unit": "hourly per GB RAM",
+                "cost": 37.50,
+                "unit": "GB RAM/month",
                 "description": "Premium managed MongoDB."
             },
             "elasticsearch_per_gb_ram": {
-                "cost": 0.19,
-                "unit": "hourly per GB RAM",
+                "cost": 136.00,
+                "unit": "GB RAM/month",
                 "description": "Premium managed Elasticsearch."
             }
         },
         "storage_rates_monthly": {
             "disk_storage": {
                 "cost": 0.49,
-                "unit": "GB"
+                "unit": "GB/month"
             },
             "backup_storage": {
                 "cost": 0.10,
@@ -55,14 +55,14 @@
         "network_edge_rates": {
             "egress_bandwidth": {
                 "included": 10,
-                "unit": "GB",
+                "unit": "GB/project/month",
                 "overage_cost": 0.03
             },
             "ingress_requests": {
                 "included": 500000,
-                "unit": "requests",
+                "unit": "requests/month",
                 "overage_cost": 1.00,
-                "overage_unit": "per 100k"
+                "overage_unit": "per 100k requests"
             },
             "fastly_cdn": {
                 "transfer": {
@@ -71,7 +71,7 @@
                 },
                 "requests": {
                     "cost": 0.188,
-                    "unit": "per 100k"
+                    "unit": "per 100k requests"
                 }
             },
             "fastly_waf_basic": {
@@ -153,7 +153,9 @@
             "tls_certificates": {
                 "included": "100 Let's Encrypt certs",
                 "standard_tls": 8.50,
-                "standard_tls_description": "Flat fee, 1-5 certs"
+                "standard_tls_description": "Flat fee, 1-5 certs",
+                "standard_tls_additional_cert_cost": 8.50,
+                "customer_generated_tls": 187.00
             },
             "hipaa_compliance": {
                 "cost_factor": 0.45,
