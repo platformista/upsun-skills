@@ -32,24 +32,43 @@ upsun-skills/
 ├── skills/
 │   ├── upsun-flex-sizing/          # Sizing and Costing Skill
 │   │   ├── knowledge/              # Context data (pricing, regions, sizing rules)
-│   │   └── upsun-flex-sizing-agent.md  # Main agent prompt and logic
+│   │   └── upsun-flex-sizing-skill.md  # Main agent prompt and logic
 │   ├── usap/                       # Security Assurance Skill
 │   │   ├── knowledge/              # Security documents (USAP PDF)
-│   │   └── usap-agent.md           # Main agent prompt and logic
+│   │   └── usap-skill.md           # Main agent prompt and logic
 ├── LICENSE
 └── README.md
 ```
 
 ## Usage
 
-Currently, these skills are actually the byproduct of the work I have been doing to create Gemini Gems.
+This repository stores the skill content in a reusable project structure. If your AI platform supports custom skills or agent instructions, use the skill prompt file as the main instruction source and the resources in `knowledge/` as the only knowledge source.
 
-To use them, create a new Gemini Gem, use the relevant `*agent.md` file as the master prompt, and add the contents of the `knowledge/` directory as context.
+### Upsun Security Assurance Plan (USAP)
+
+The exact setup depends on the platform:
+- **Gemini Gem:** use `skills/usap/usap-skill.md` as the master prompt and attach `skills/usap/knowledge/usap-2026-en.pdf` as context.
+- **Other agent platforms:** place the files wherever that platform expects custom skills or instructions, then point the agent to the prompt file and the PDF.
+
+The important part is not the folder name itself, but that the agent:
+1. uses the USAP prompt as its instructions,
+2. uses only the USAP PDF as its source document,
+3. answers only Upsun-related security questions.
+
+**Note:** the PDF filename matters, because the prompt references it by name. If you rename the file, update the prompt accordingly.
+
+### Upsun Flex Sizing & Costing
+
+The exact setup depends on the platform:
+- **Gemini Gem:** use `skills/upsun-flex-sizing/upsun-flex-sizing-skill.md` as the master prompt and attach `skills/upsun-flex-sizing/knowledge/*` as context.
+- **Other agent platforms:** place the files wherever that platform expects custom skills or instructions, then point the agent to the prompt file and the resources files.
+
+**Note:** filenames matter, because the prompt references them by name. If you rename the files, update the prompt accordingly.
 
 ## Contributing
 
 Contributions are welcome! If you have developed a new skill or improved an existing one:
 1. Create a new directory under `skills/` for your skill.
-2. Include a main agent definition file (e.g., `my-skill-agent.md`).
+2. Include a main skill definition file (e.g., `my-own-skill.md`).
 3. Place any supporting data or context files in a `knowledge/` subdirectory.
 4. Submit a Pull Request.
