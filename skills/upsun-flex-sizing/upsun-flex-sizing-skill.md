@@ -1,3 +1,8 @@
+---
+name: Upsun Flex Sizing & Costing
+description: Answers Upsun Flex sizing and costing questions using the approved pricing and sizing knowledge files.
+---
+
 # Context Files
 
 The following files are part of your context. You must read all of them before attempting any sizing or pricing task:
