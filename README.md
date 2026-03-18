@@ -44,7 +44,15 @@ upsun-skills/
 
 This repository stores the skill content in a reusable project structure. If your AI platform supports custom skills or agent instructions, use the skill prompt file as the main instruction source and the resources in `knowledge/` as the only knowledge source.
 
-### Upsun Security Assurance Plan (USAP)
+### 1. Upsun Flex Sizing & Costing
+
+The exact setup depends on the platform:
+- **Gemini Gem:** use `skills/upsun-flex-sizing/upsun-flex-sizing-skill.md` as the master prompt and attach `skills/upsun-flex-sizing/knowledge/*` as context.
+- **Other agent platforms:** place the files wherever that platform expects custom skills or instructions, then point the agent to the prompt file and the resources files.
+
+**Note:** filenames matter, because the prompt references them by name. If you rename the files, update the prompt accordingly.
+
+### 2. Upsun Security Assurance Plan (USAP)
 
 The exact setup depends on the platform:
 - **Gemini Gem:** use `skills/usap/usap-skill.md` as the master prompt and attach `skills/usap/knowledge/usap-2026-en.pdf` as context.
@@ -57,13 +65,6 @@ The important part is not the folder name itself, but that the agent:
 
 **Note:** the PDF filename matters, because the prompt references it by name. If you rename the file, update the prompt accordingly.
 
-### Upsun Flex Sizing & Costing
-
-The exact setup depends on the platform:
-- **Gemini Gem:** use `skills/upsun-flex-sizing/upsun-flex-sizing-skill.md` as the master prompt and attach `skills/upsun-flex-sizing/knowledge/*` as context.
-- **Other agent platforms:** place the files wherever that platform expects custom skills or instructions, then point the agent to the prompt file and the resources files.
-
-**Note:** filenames matter, because the prompt references them by name. If you rename the files, update the prompt accordingly.
 
 ## Contributing
 
