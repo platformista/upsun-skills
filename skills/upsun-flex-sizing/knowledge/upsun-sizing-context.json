@@ -32,6 +32,7 @@
       "note": "HIGHER_MEMORY profile not supported in this tier.",
       "units": { "cpu": "vCPU", "ram": "MB" },
       "allocations": [
+        { "cpu": 2,  "ram": { "HIGH_CPU": 4096,   "BALANCED": 8192,  "HIGH_MEMORY": 16384,  "HIGHER_MEMORY": null } },
         { "cpu": 4,  "ram": { "HIGH_CPU": 8192,   "BALANCED": 16384,  "HIGH_MEMORY": 32768,  "HIGHER_MEMORY": null } },
         { "cpu": 8,  "ram": { "HIGH_CPU": 16384,  "BALANCED": 32768,  "HIGH_MEMORY": 65536,  "HIGHER_MEMORY": null } },
         { "cpu": 16, "ram": { "HIGH_CPU": 32768,  "BALANCED": 65536,  "HIGH_MEMORY": 131072, "HIGHER_MEMORY": null } },
