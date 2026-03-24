@@ -39,7 +39,7 @@ If you have `ai-gateway` installed and configured:
 ai-gateway status
 
 # Run tests through the gateway (no API key needed!)
-ai-gateway run python run_usap_tests.py
+ANTHROPIC_BASE_URL=http://127.0.0.1:38089  python run_usap_tests.py
 ```
 
 The gateway automatically sets the required environment variables (`ANTHROPIC_BASE_URL`, etc.).
@@ -65,7 +65,7 @@ The script automatically detects paths relative to its location, so you can run 
 **With AI Gateway (recommended):**
 ```bash
 cd tests
-ai-gateway run python run_usap_tests.py
+ANTHROPIC_BASE_URL=http://127.0.0.1:38089 python run_usap_tests.py 
 ```
 Uses `claude-sonnet-4-6` by default (recommended by ai-gateway).
 
@@ -84,23 +84,23 @@ ai-gateway run python tests/run_usap_tests.py
 
 **Claude Haiku (faster, cheaper):**
 ```bash
-ai-gateway run python run_usap_tests.py --model claude-haiku-4-5
+ANTHROPIC_BASE_URL=http://127.0.0.1:38089 python run_usap_tests.py --model claude-haiku-4-5
 ```
 
 **Claude Opus (highest quality):**
 ```bash
-ai-gateway run python run_usap_tests.py --model claude-opus-4-6
+ANTHROPIC_BASE_URL=http://127.0.0.1:38089 python run_usap_tests.py --model claude-opus-4-6
 ```
 
 **OpenAI (uses gpt-5.4 by default):**
 ```bash
-ai-gateway run python run_usap_tests.py --model-provider openai
+ANTHROPIC_BASE_URL=http://127.0.0.1:38089 python run_usap_tests.py --model-provider openai
 ```
 
 ### Test a Subset (for debugging)
 
 ```bash
-ai-gateway run python run_usap_tests.py --limit 10
+ANTHROPIC_BASE_URL=http://127.0.0.1:38089 python run_usap_tests.py --limit 10
 # or
 python run_usap_tests.py --limit 10
 ```
