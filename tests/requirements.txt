@@ -1,0 +1,9 @@
+# USAP Test Suite Requirements
+
+# LLM Providers (install the one you plan to use)
+anthropic>=0.40.0
+openai>=1.0.0
+
+# Optional: For advanced reporting
+pandas>=2.0.0
+matplotlib>=3.7.0
