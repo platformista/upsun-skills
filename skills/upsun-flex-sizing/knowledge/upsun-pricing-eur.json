@@ -158,8 +158,8 @@
                 "customer_generated_tls": 187.00
             },
             "hipaa_compliance": {
-                "cost_factor": 0.45,
-                "description": "+45% of project value"
+                "cost_factor": 0.25,
+                "description": "+25% of project value"
             }
         },
         "support_tiers": {
