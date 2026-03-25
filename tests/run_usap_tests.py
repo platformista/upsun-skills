@@ -17,36 +17,30 @@ import json
 import argparse
 import os
 from pathlib import Path
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from datetime import datetime
 import re
 
-try:
-    from anthropic import Anthropic
-except ImportError:
-    Anthropic = None
-
-try:
-    from openai import OpenAI
-except ImportError:
-    OpenAI = None
+from providers import get_provider, LLMProvider
 
 
 class USAPTestRunner:
     """Test runner for USAP skill validation."""
 
-    def __init__(self, test_suite_path: str, usap_skill_path: str, model_provider: str = "anthropic", model: str = "claude-3-5-sonnet-20241022"):
+    def __init__(self, test_suite_path: str, usap_skill_path: str, pdf_path: Optional[str], model_provider: str = "anthropic", model: str = "claude-sonnet-4-6"):
         """
         Initialize the test runner.
 
         Args:
             test_suite_path: Path to the test suite JSON file
             usap_skill_path: Path to the USAP skill markdown file
-            model_provider: LLM provider ("anthropic" or "openai")
+            pdf_path: Path to the USAP PDF document (optional)
+            model_provider: LLM provider ("anthropic", "openai", or "gemini")
             model: Model identifier
         """
         self.test_suite_path = Path(test_suite_path)
         self.usap_skill_path = Path(usap_skill_path)
+        self.pdf_path = Path(pdf_path) if pdf_path else None
         self.model_provider = model_provider
         self.model = model
 
@@ -61,44 +55,8 @@ class USAPTestRunner:
         # Get expected disclaimer text
         self.expected_disclaimer = self.test_data['test_suite']['disclaimer_text']
 
-        # Initialize LLM client
-        self.client = self._init_client()
-
-    def _init_client(self):
-        """Initialize the LLM client based on provider."""
-        if self.model_provider == "anthropic":
-            if Anthropic is None:
-                raise ImportError("anthropic package not installed. Run: pip install anthropic")
-
-            # Check for API key (optional if using ai-gateway)
-            api_key = os.environ.get("ANTHROPIC_API_KEY", "dummy-key-for-gateway")
-
-            # Support ai-gateway base URL override
-            base_url = os.environ.get("ANTHROPIC_BASE_URL")
-            if base_url:
-                return Anthropic(api_key=api_key, base_url=base_url)
-            else:
-                if api_key == "dummy-key-for-gateway":
-                    raise ValueError("ANTHROPIC_API_KEY environment variable not set. Set it or use ai-gateway.")
-                return Anthropic(api_key=api_key)
-
-        elif self.model_provider == "openai":
-            if OpenAI is None:
-                raise ImportError("openai package not installed. Run: pip install openai")
-
-            # Check for API key (optional if using ai-gateway)
-            api_key = os.environ.get("OPENAI_API_KEY", "dummy-key-for-gateway")
-
-            # Support ai-gateway base URL override
-            base_url = os.environ.get("OPENAI_BASE_URL")
-            if base_url:
-                return OpenAI(api_key=api_key, base_url=base_url)
-            else:
-                if api_key == "dummy-key-for-gateway":
-                    raise ValueError("OPENAI_API_KEY environment variable not set. Set it or use ai-gateway.")
-                return OpenAI(api_key=api_key)
-        else:
-            raise ValueError(f"Unsupported model provider: {self.model_provider}")
+        # Initialize provider
+        self.provider = get_provider(model_provider, model)
 
     def _call_llm(self, question: str) -> str:
         """
@@ -116,27 +74,12 @@ class USAPTestRunner:
 
 Important: Follow the instructions in the skill document precisely."""
 
-        if self.model_provider == "anthropic":
-            response = self.client.messages.create(
-                model=self.model,
-                max_tokens=2000,
-                system=system_prompt,
-                messages=[
-                    {"role": "user", "content": question}
-                ]
-            )
-            return response.content[0].text
-
-        elif self.model_provider == "openai":
-            response = self.client.chat.completions.create(
-                model=self.model,
-                messages=[
-                    {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": question}
-                ],
-                max_tokens=2000
-            )
-            return response.choices[0].message.content
+        # Call provider with PDF if available
+        return self.provider.call(
+            system_prompt=system_prompt,
+            question=question,
+            pdf_path=self.pdf_path
+        )
 
     def _check_disclaimer(self, response: str) -> bool:
         """Check if the disclaimer is present in the response."""
@@ -174,20 +117,29 @@ Important: Follow the instructions in the skill document precisely."""
         """Check if the response properly refuses to answer out-of-scope questions."""
         response_lower = response.lower()
 
-        # Look for refusal indicators
-        refusal_patterns = [
-            r'cannot answer',
-            r'not.*upsun.*related',
-            r'not.*security.*related',
-            r'only.*security',
-            r'my.*job.*is.*to.*provide.*security',
-            r'out.*of.*scope',
-            r'not.*able.*to.*answer',
+        # Strong refusal indicators (must be actual refusals, not partial info disclaimers)
+        strong_refusal_patterns = [
+            r'(this question|that question|your question) is (outside|out of)( the)? scope',
+            r'not upsun-related',
+            r'not.*security-related',
+            r'my (only )?job is to (answer|provide).*security',
+            r'(i )?(cannot|will not|refuse to) answer.*question',
         ]
 
-        for pattern in refusal_patterns:
+        # Check for strong refusals first
+        for pattern in strong_refusal_patterns:
             if re.search(pattern, response_lower):
                 return True
+
+        # Additional check: If response mentions contacting Upsun AND is very short (< 500 chars),
+        # it's likely a refusal with redirect
+        has_redirect = 'upsun.com/contact' in response_lower or 'contact-us' in response_lower
+        is_short = len(response) < 500
+
+        # Check if it says "outside my scope" or similar early in response
+        first_200_chars = response_lower[:200]
+        if has_redirect and is_short and ('outside' in first_200_chars or 'not' in first_200_chars and 'security' in first_200_chars):
+            return True
 
         return False
 
@@ -393,10 +345,12 @@ def main():
                        help='Path to test suite JSON file (default: usap-test-suite.json in script dir)')
     parser.add_argument('--skill', default=None,
                        help='Path to USAP skill file (default: ../skills/usap/usap-skill.md)')
-    parser.add_argument('--model-provider', choices=['anthropic', 'openai'], default='anthropic',
+    parser.add_argument('--pdf', default=None,
+                       help='Path to USAP PDF document (default: ../skills/usap/knowledge/usap-2026-en.pdf)')
+    parser.add_argument('--model-provider', choices=['anthropic', 'openai', 'gemini'], default='anthropic',
                        help='LLM provider to use')
     parser.add_argument('--model', default=None,
-                       help='Model identifier (default: claude-sonnet-4-6 for Anthropic, gpt-5.4 for OpenAI). Other options: claude-haiku-4-5, claude-opus-4-6')
+                       help='Model identifier (default: claude-sonnet-4-6 for Anthropic, gpt-5.4 for OpenAI, gemini-1.5-pro for Gemini)')
     parser.add_argument('--output', default=None,
                        help='Output file for detailed results (default: auto-generated in results/)')
     parser.add_argument('--limit', type=int, default=None,
@@ -410,6 +364,8 @@ def main():
             args.model = 'claude-sonnet-4-6'  # Recommended by ai-gateway
         elif args.model_provider == 'openai':
             args.model = 'gpt-5.4'  # Recommended by ai-gateway
+        elif args.model_provider == 'gemini':
+            args.model = 'gemini-1.5-pro'
 
     # Set default paths relative to script location
     if args.test_suite is None:
@@ -421,6 +377,11 @@ def main():
         args.skill = repo_root / 'skills' / 'usap' / 'usap-skill.md'
     else:
         args.skill = Path(args.skill)
+
+    if args.pdf is None:
+        args.pdf = repo_root / 'skills' / 'usap' / 'knowledge' / 'usap-2026-en.pdf'
+    else:
+        args.pdf = Path(args.pdf)
 
     # Auto-generate output filename if not provided
     if args.output is None:
@@ -437,6 +398,7 @@ def main():
     runner = USAPTestRunner(
         test_suite_path=args.test_suite,
         usap_skill_path=args.skill,
+        pdf_path=args.pdf,
         model_provider=args.model_provider,
         model=args.model
     )

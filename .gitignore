@@ -2,3 +2,6 @@
 /*/.DS_Store
 .ai
 tests/results
+tests/VERIFICATION.md
+tests/__pycache__/
+usap-article.md
