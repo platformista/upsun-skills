@@ -9,17 +9,16 @@ The following files are part of your context. You must read all of them before a
 
 | File | Purpose |
 |---|---|
-| `upsun-pricing-eur.json` | All EUR rates: **monthly** CPU/RAM, storage, network/egress, managed services, build resources, platform services, support tiers, SLA uplifts |
-| `upsun-pricing-aud.json` | All AUD rates: **monthly** CPU/RAM, storage, network/egress, managed services, build resources, platform services, support tiers, SLA uplifts |
+| `upsun-pricing.json` | Unified multi-currency pricebook with SKU definitions, rate definitions, constants, and pricing for EUR, USD, AUD, GBP, CAD, CHF. Includes: compute rates (CPU/RAM for applications and services, shared and guaranteed), premium services (MongoDB, Elasticsearch), storage, network/egress, Fastly CDN/WAF, platform services, build resources, TLS certificates, support tiers, and SLA uplifts. |
 | `upsun-sizing-context.json` | Container profiles (HIGH_CPU, BALANCED, HIGH_MEMORY, HIGHER_MEMORY) and shared/guaranteed resource matrices |
 | `upsun-regions.json` | Available deployment regions, cloud provider, timezone, green discount eligibility |
 
-> Use the pricing file that matches the user's requested currency:
-> - `upsun-pricing-eur.json` for **EUR**
-> - `upsun-pricing-aud.json` for **AUD**
->
-> If the user does not specify a currency, default to **EUR**.
-> Do not convert between currencies unless the user explicitly asks for a conversion.
+> **Currency Selection:**
+> - `upsun-pricing.json` contains pricing for **EUR, USD, AUD, GBP, CAD, and CHF**.
+> - Use the currency object that matches the user's requested currency.
+> - If the user does not specify a currency, default to **EUR**.
+> - Do not convert between currencies unless the user explicitly asks for a conversion.
+> - Some features may have `null` pricing in certain currencies, indicating they are not yet available in that market.
 
 ---
 
@@ -110,9 +109,9 @@ Before you attempt any sizing or pricing, you must:
 2. Map each runtime (PHP, Ruby, Java, etc.) to its default container profile.
 3. Map each service (MariaDB, PostgreSQL, Redis, etc.) to its default container profile.
 4. Look up actual RAM values from `upsun-sizing-context.json` for all subsequent calculations.
-5. Determine the requested pricing currency and load rates from the matching pricing JSON file. If no currency is specified, use EUR.
+5. Determine the requested pricing currency and load rates from `upsun-pricing.json` under the appropriate currency key (EUR, USD, AUD, GBP, CAD, or CHF). If no currency is specified, use EUR.
 
-> ⚠️ **Usage Note:** All compute and service rates in the selected pricing JSON file are **monthly**. For calculations involving partial months (e.g. ad-hoc preview environments), use `fraction = (uptime_hours / 732)` against the monthly rate.
+> ⚠️ **Usage Note:** All compute and service rates in `upsun-pricing.json` are **monthly**. For calculations involving partial months (e.g. ad-hoc preview environments), use `fraction = (uptime_hours / 732)` against the monthly rate. The constant `_hours_per_month: 732` is defined at the top level of the pricing file.
 
 You are free to override the default profile when the workload justifies it. Always explain the reason.
 
@@ -137,7 +136,7 @@ If the user does not specify their stack or traffic, apply these defaults and st
 
 # Pricing Model and Calculation Method
 
-All rates are in the selected pricing JSON file. They are monthly figures.
+All rates are in `upsun-pricing.json`. They are monthly figures organized by currency.
 
 ## Per-environment resource cost formula
 
@@ -146,6 +145,13 @@ For each application or service:
 ```
 monthly_cost = (monthly_cpu_rate × cpu_units) + (monthly_ram_rate × ram_gb)
 ```
+
+Use the appropriate rate from `upsun-pricing.json`:
+- **Applications with shared CPU:** Use `application_shared_cpu` and `application_ram_gb`
+- **Applications with guaranteed CPU:** Use `application_guaranteed_cpu` and `application_ram_gb`
+- **Services with shared CPU:** Use `service_shared_cpu` and `service_ram_gb`
+- **Services with guaranteed CPU:** Use `service_guaranteed_cpu` and `service_ram_gb`
+- **Premium services (MongoDB, Elasticsearch):** Use `premium_mongodb_ram_gb` or `premium_elasticsearch_ram_gb` (billed by RAM only, no separate CPU charge)
 
 > **Note:** RAM GB is looked up from `upsun-sizing-context.json` (as MB) and converted to GB (÷ 1024).
 
@@ -158,11 +164,11 @@ monthly_cost = [(monthly_cpu_rate × cpu_units) + (monthly_ram_rate × ram_gb)] 
 Then, for the environment total:
 
 1. Sum compute costs across all apps and services.
-2. Add storage: `disk_gb × €0.49/GB` + `backup_gb × €0.10/GB`.
-3. Add estimated egress (first 10 GB included; €0.03/GB overage).
-4. Add fixed fees: project fee, user licences.
-5. Apply SLA uplift (if any) to the project value.
-6. Apply support tier uplift to global spend.
+2. Add storage using rates from the selected currency: `disk_gb × storage_disk_per_gb` + `backup_gb × storage_backup_per_gb`.
+3. Add estimated egress (use `constants.origin_included_bandwidth_gb` for included amount; charge overage at `origin_overage_bandwidth_per_gb`).
+4. Add fixed fees: `project_fee`, `user_license` (per user), `advanced_user_management` (if applicable).
+5. Apply SLA uplift (if any) to the project value using factors from `constants.sla_upgrades`.
+6. Apply support tier uplift to global spend using factors from `constants.support_tiers`.
 
 ---
 
