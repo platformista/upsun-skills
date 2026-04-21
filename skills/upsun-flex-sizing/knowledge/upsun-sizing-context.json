@@ -7,7 +7,7 @@
         "description": "Determines the RAM-to-CPU ratio.",
         "options": [
           { "id": "HIGH_CPU", "ratio": "Low RAM", "best_for": ["Node.js", "PHP", "Python", "Go", "Rust", ".NET", "Stateless Apps"] },
-          { "id": "BALANCED", "ratio": "Medium RAM", "best_for": ["Redis", "Memcached", "General Purpose"] },
+          { "id": "BALANCED", "ratio": "Medium RAM", "best_for": ["Redis", "Memcached", "Mercure", "General Purpose"] },
           { "id": "HIGH_MEMORY", "ratio": "High RAM", "best_for": ["MySQL", "MariaDB", "PostgreSQL", "MongoDB", "Java", "Elasticsearch"] },
           { "id": "HIGHER_MEMORY", "ratio": "Very High RAM", "best_for": ["Heavy Data Processing", "Large Caches"] }
         ]
