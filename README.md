@@ -12,10 +12,13 @@ This repository houses "skills"—packages of context, constraints, and logic th
 **Directory:** `skills/upsun-flex-sizing`
 
 This skill equips an agent to act as a specialist in Upsun Flex sizing and costing. It covers:
-- **Resource Logic:** Calculating CPU and RAM requirements based on Upsun's specific container profiles (HIGH_CPU, BALANCED, HIGH_MEMORY, etc.).
-- **Pricing Model:** Detailed cost estimation including per-environment resources, storage, egress, and support tiers.
-- **Regions:** Awareness of available Upsun regions (via `knowledge/upsun-regions.json`).
-- **Optimization:** Strategies for cost-efficiency, such as managing non-production environments.
+- **Resource Logic:** Calculating CPU and RAM requirements based on Upsun's specific container profiles (HIGH_CPU, BALANCED, HIGH_MEMORY, HIGHER_MEMORY) and shared/guaranteed CPU matrices.
+- **Three-Scenario Approach:** Automatically generates Optimistic, Baseline (recommended), and Pessimistic sizing scenarios with cost comparisons and use-case fit analysis.
+- **Comprehensive Pricing:** Multi-currency cost estimation (EUR, USD, AUD, GBP, CAD, CHF) including compute resources, storage, network traffic (ingress/egress), premium services (MongoDB, Elasticsearch), SLA uplifts, and support tiers.
+- **Platform-Specific Knowledge:** Specialized sizing heuristics for specific platforms (e.g., Pimcore Enterprise with heavy image processing, asset management, and DAM workloads).
+- **Project Isolation Rules:** Strict enforcement of Upsun's project boundaries and zero-shared-state architecture.
+- **Regions:** Awareness of available Upsun regions with green energy discount eligibility.
+- **Optimization:** Cost-efficiency strategies including environment management, scheduled pausing, ephemeral previews, and horizontal vs vertical scaling trade-offs.
 
 ### 2. Upsun Security Assurance Plan (USAP)
 **Directory:** `skills/usap`
