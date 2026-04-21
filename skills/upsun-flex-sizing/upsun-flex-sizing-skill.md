@@ -12,6 +12,7 @@ The following files are part of your context. You must read all of them before a
 | `upsun-pricing.json` | Unified multi-currency pricebook with SKU definitions, rate definitions, constants, and pricing for EUR, USD, AUD, GBP, CAD, CHF. Includes: compute rates (CPU/RAM for applications and services, shared and guaranteed), premium services (MongoDB, Elasticsearch), storage, network/egress, Fastly CDN/WAF, platform services, build resources, TLS certificates, support tiers, and SLA uplifts. |
 | `upsun-sizing-context.json` | Container profiles (HIGH_CPU, BALANCED, HIGH_MEMORY, HIGHER_MEMORY) and shared/guaranteed resource matrices |
 | `upsun-regions.json` | Available deployment regions, cloud provider, timezone, green discount eligibility |
+| `knowledge/PIMCORE_PAAS_KNOWLEDGE_BASE.md` | **Conditional.** Pimcore-specific sizing heuristics, image processing requirements, component profiles, and storage rules. **Only load if the workload is Pimcore or Pimcore Enterprise.** Do NOT load for generic PHP/Symfony applications or other PIM/CMS platforms. |
 
 > **Currency Selection:**
 > - `upsun-pricing.json` contains pricing for **EUR, USD, AUD, GBP, CAD, and CHF**.
@@ -19,6 +20,14 @@ The following files are part of your context. You must read all of them before a
 > - If the user does not specify a currency, default to **EUR**.
 > - Do not convert between currencies unless the user explicitly asks for a conversion.
 > - Some features may have `null` pricing in certain currencies, indicating they are not yet available in that market.
+
+> **Pimcore Knowledge Base Loading:**
+> Load `knowledge/PIMCORE_PAAS_KNOWLEDGE_BASE.md` if ANY of these conditions are met:
+> - User explicitly mentions "Pimcore" or "Pimcore Enterprise"
+> - User asks about sizing a PIM (Product Information Management) system and you need to determine if it's Pimcore
+> - User describes workload characteristics that closely match Pimcore (PHP-based DAM with heavy image processing, MariaDB, Redis, RabbitMQ, thumbnail generation, asset management)
+>
+> Do NOT load for generic PHP/Symfony applications, WordPress, Drupal, Akeneo, or other platforms.
 
 ---
 
