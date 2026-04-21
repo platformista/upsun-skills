@@ -276,14 +276,133 @@ Every answer must follow this structure:
 
    Use a tabular format to present the information in this section. 
 
-3. **Production sizing & cost breakdown**
-   - Monthly fixed fees (project, users, advanced user management if applicable).
-   - Resource allocation (CPU/RAM/storage, shared vs guaranteed).
-   - Subtotal per component, then environment total.
-   - Total monthly project cost.
-   - Total annual project cost.
+3. **Production Sizing Scenarios**
+
+   Present three production scenarios: Optimistic, Baseline, and Pessimistic. Each scenario must vary in:
+   - CPU type (shared vs guaranteed for apps and services)
+   - Container sizes (CPU allocation from resource matrices)
+   - Container profiles (HIGH_CPU, BALANCED, HIGH_MEMORY, HIGHER_MEMORY)
+   - Instance counts (horizontal scaling)
+   - Storage allocation
+   - Network overage assumptions
    
-   Use a tabular format to present the cost breakdown in this section.
+   **3.1 Summary Comparison Table**
+   
+   First, provide an at-a-glance comparison table with these columns:
+   - Metric (row headers)
+   - Optimistic values
+   - Baseline values
+   - Pessimistic values
+   
+   Include these metrics:
+   - Philosophy (one-line description)
+   - Total Monthly cost
+   - Annual cost (with support tier applied)
+   - App CPU Type (Shared/Guaranteed)
+   - Service CPU Type (Shared/Guaranteed)
+   - App Instance count
+   - Total vCPU across all components
+   - Total RAM across all components
+   - Total Storage
+   - Network allowance assumption
+   - Cost Delta from Baseline (percentage and absolute)
+   - Use Case Fit (one-line description per scenario)
+   
+   **3.2 Scenario Definitions & Variation Rules**
+   
+   **Optimistic Scenario**:
+   - Philosophy: Minimal cost, assumes ideal conditions and predictable traffic
+   - CPU Type: Shared for all applications AND services
+   - Container Size: Select from lower range of shared resource matrix:
+     - Applications: 0.1-0.5 vCPU range
+     - Services: 0.5-1.0 vCPU range
+   - Profile Selection: Prefer HIGH_CPU for apps (lower RAM/CPU ratio), use BALANCED for services unless HIGH_MEMORY is mandatory
+   - Instances: 1 instance for all components (no horizontal scaling)
+   - Storage: Minimal viable (1-5 GB for development, 5-15 GB for production workloads)
+   - Network: Assume staying within free tier (500k requests, 10 GB egress); overage = 0
+   - Use Case: "Stable, predictable traffic with low growth; acceptable occasional performance variance"
+   
+   **Baseline Scenario** (mark as "Recommended"):
+   - Philosophy: Balanced approach, size for sustainable average load
+   - CPU Type: Mixed approach
+     - Applications: Shared (unless workload analysis shows sustained high RPS or latency sensitivity)
+     - Services (databases, search): Guaranteed (data integrity and consistency priority)
+   - Container Size: Middle range selection:
+     - Applications (shared): 0.5-2 vCPU range
+     - Services (guaranteed): 2-4 vCPU range
+   - Profile Selection: Use documented defaults from skill (HIGH_CPU for PHP/Node/Python, HIGH_MEMORY for DBs, BALANCED for caches)
+   - Instances: 1 instance for apps, 1 for services (may use 2 app instances if HA explicitly requested)
+   - Storage: Moderate allocation (10-25 GB for small workloads, 25-100 GB for medium)
+   - Network: Modest overage (1.5-2x free tier: ~750k-1M requests, 15-20 GB egress)
+   - Use Case: "Standard production workload; moderate growth expected; balance of cost and reliability"
+   
+   **Pessimistic Scenario**:
+   - Philosophy: Maximum reliability, accounts for growth and traffic spikes
+   - CPU Type: Guaranteed for ALL applications AND services
+   - Container Size: Upper range from guaranteed resource matrix:
+     - Applications: 2-4 vCPU range
+     - Services: 4-8 vCPU range
+   - Profile Selection: Prefer higher-memory profiles:
+     - Applications: BALANCED (instead of HIGH_CPU) or HIGH_MEMORY for data-intensive
+     - Services: HIGH_MEMORY consistently
+     - WARNING: HIGHER_MEMORY not available with guaranteed CPU
+   - Instances: Multiple instances for applications (2-3 for HA), 1-2 for services if supported
+   - Storage: Generous allocation (50-100 GB for small workloads, 100-500 GB for medium)
+   - Network: High overage allowance (5-10x free tier: 2.5M-5M requests, 50-100 GB egress)
+   - Use Case: "High-growth expectations; latency-sensitive; peak traffic accommodation; maximum reliability"
+   
+   **3.3 Detailed Breakdown per Scenario**
+   
+   For each scenario (Optimistic, Baseline, Pessimistic), provide:
+   
+   a. **Philosophy & Justification**: 2-3 sentence explanation of the scenario's assumptions and trade-offs
+   
+   b. **Resource Allocation Table**:
+   | Component | CPU Type | vCPU | RAM | Profile | Instances | Monthly Cost |
+   |-----------|----------|------|-----|---------|-----------|--------------|
+   | [Component rows] | | | | | | |
+   | **Compute Total** | | | | | | **€XX.XX** |
+   
+   c. **Storage & Network Table**:
+   | Item | Quantity | Rate | Monthly Cost |
+   |------|----------|------|--------------|
+   | Storage (disk) | X GB | €X.XX/GB | €XX.XX |
+   | Backup | X GB | €X.XX/GB | €XX.XX |
+   | Network egress | X GB overage | €X.XX/GB | €XX.XX |
+   | Network requests | X overage | €X/100k | €XX.XX |
+   | **Storage & Network Total** | | | **€XX.XX** |
+   
+   d. **Fixed Fees & Uplifts Table**:
+   | Item | Amount |
+   |------|--------|
+   | Project fee | €X.XX |
+   | User licenses (N) | €X.XX |
+   | Advanced user mgmt (if applicable) | €X.XX |
+   | Base subtotal | €XXX.XX |
+   | SLA uplift (if requested) | €XX.XX |
+   | Subtotal after SLA | €XXX.XX |
+   | Support tier uplift | €XX.XX |
+   | **Total Monthly** | **€XXX.XX** |
+   | **Total Annual** | **€X,XXX.XX** |
+   
+   e. **Key Assumptions**: Bulleted list of 3-5 critical assumptions for this scenario
+   
+   **Important Calculation Rules**:
+   - Fixed fees (project_fee, user_license) are IDENTICAL across all three scenarios
+   - SLA uplifts (if requested) apply to all three scenarios equally
+   - Support tier uplifts apply to final totals for all three scenarios
+   - Only variable costs change: CPU rates, CPU quantities, RAM quantities, storage, network
+   - Use actual rates from `upsun-pricing.json` for the requested currency
+   - Look up actual RAM values from `upsun-sizing-context.json` resource matrices
+   - When calculating horizontal scaling, multiply per-instance cost by instance count
+   
+   **Presentation Order**:
+   1. Summary comparison table first (allows quick scanning)
+   2. Detailed breakdown for Optimistic
+   3. Detailed breakdown for Baseline (mark as "Recommended")
+   4. Detailed breakdown for Pessimistic
+   
+   After presenting all three scenarios, add a brief recommendation paragraph explaining which scenario best fits the user's stated requirements (if any) and why.
 
 4. **Environment strategy for non-production**
    - Preview/staging/dev environments: resource levels, uptime assumptions, monthly cost.
@@ -297,3 +416,102 @@ Every answer must follow this structure:
 For each sizing choice, briefly explain the rationale: e.g. *"BALANCED profile at 0.5 CPU because traffic is moderate and this framework is not memory-bound; can move to HIGH_MEMORY if DB caching pressure increases."*
 
 Cite sources (Upsun docs, pricing pages, or external best-practice guides) whenever you rely on them.
+
+---
+
+# Scenario Selection Guidance
+
+When generating the three production scenarios, apply these decision trees:
+
+## CPU Type Selection
+
+**Optimistic**:
+- Applications: Always Shared
+- Services: Always Shared
+
+**Baseline**:
+- Applications: Shared (unless user mentions "high RPS", "latency-sensitive", "e-commerce checkout", "real-time APIs")
+- Services: Guaranteed (data integrity priority)
+
+**Pessimistic**:
+- Applications: Always Guaranteed
+- Services: Always Guaranteed
+
+## Container Size Selection Algorithm
+
+1. Identify the workload's base requirement from traffic/specs
+2. Select CPU from appropriate resource matrix (shared or guaranteed)
+3. Apply scenario multiplier:
+
+**Optimistic**: 
+- If base requirement is X vCPU, select min(0.5 * X, minimum_matrix_size)
+- Round down to nearest available size in matrix
+- Example: 1 vCPU base → 0.5 vCPU optimistic
+
+**Baseline**:
+- Use the base requirement as calculated from workload analysis
+- Round to nearest available size in matrix
+- Example: 1 vCPU base → 1 vCPU baseline
+
+**Pessimistic**:
+- Select 2 * base requirement
+- Round up to nearest available size in matrix
+- Example: 1 vCPU base → 2 vCPU pessimistic
+
+## Profile Selection
+
+Reference the default profiles from "Baseline Defaults" section (line 131-144), then apply these overrides:
+
+**Optimistic Override**:
+- If default is BALANCED, consider HIGH_CPU (unless cache/DB)
+- If default is HIGH_MEMORY, keep it (data services require it)
+
+**Baseline Override**:
+- Use defaults as-is
+
+**Pessimistic Override**:
+- If default is HIGH_CPU, upgrade to BALANCED
+- If default is BALANCED, upgrade to HIGH_MEMORY
+- If default is HIGH_MEMORY, keep it (HIGHER_MEMORY not available with Guaranteed CPU)
+
+## Storage Calculation
+
+1. Determine minimum viable storage from:
+   - User-provided data volume
+   - Industry benchmarks for the stack
+   - Minimum 1 GB if no data available
+
+2. Apply scenario multipliers:
+- Optimistic: 1x minimum
+- Baseline: 2-3x minimum
+- Pessimistic: 5-10x minimum
+
+3. Add backup storage at same multipliers
+
+## Network Overage Estimation
+
+If user provides traffic metrics (page views, RPS), calculate expected requests/month and egress GB/month.
+
+**Optimistic**:
+- Assume 0 overage (stay within 500k requests, 10 GB egress)
+- If calculated traffic exceeds free tier, use: calculated * 0.8 to account for caching
+
+**Baseline**:
+- If calculated traffic is within free tier: 1.5x free tier as overage estimate
+- If calculated traffic exceeds free tier: calculated traffic as overage estimate
+
+**Pessimistic**:
+- Use 5x free tier or 2x calculated traffic, whichever is higher
+
+## Instance Count Logic
+
+**Optimistic**:
+- Always 1 instance for all components
+
+**Baseline**:
+- Applications: 1 instance (2 if user explicitly mentions "high availability" or "zero downtime")
+- Services: Always 1 instance
+
+**Pessimistic**:
+- Applications: 2-3 instances (3 for explicitly HA-critical workloads)
+- Services: 1 instance (databases don't horizontally scale by default in Upsun)
