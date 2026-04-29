@@ -1,0 +1,49 @@
+applications:
+  web:
+    source:
+      root: "/"
+
+    type: "nodejs:22"
+
+    build:
+      flavor: none
+
+    hooks:
+      build: |
+        set -e
+        cd web
+        npm ci --production=false
+        npm run build
+
+    web:
+      commands:
+        start: "cd web && node_modules/.bin/next start -p $PORT"
+      locations:
+        "/":
+          passthru: true
+
+    mounts:
+      "web/.next/cache":
+        source: storage
+        source_path: "next-cache"
+
+    variables:
+      env:
+        NODE_ENV: "production"
+        SKILLS_ROOT: "/app/skills"
+        # Set sensitive/deployment-specific variables via CLI:
+        #   upsun variable:create --name env:AI_API_KEY --value "sk-..." --sensitive true
+        #   upsun variable:create --name env:AI_BASE_URL --value "https://your-proxy.example.com"
+        #   upsun variable:create --name env:AI_PROVIDER --value "openai"
+        #   upsun variable:create --name env:AI_MODEL --value "claude-sonnet-4-6"
+
+routes:
+  "https://{default}/":
+    type: upstream
+    upstream: "web:http"
+    cache:
+      enabled: false
+
+  "https://www.{default}/":
+    type: redirect
+    to: "https://{default}/"

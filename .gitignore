@@ -5,3 +5,7 @@ tests/results
 tests/VERIFICATION.md
 tests/__pycache__/
 usap-article.md
+node_modules/
+web/.next/
+web/.env.local
+.claude/
